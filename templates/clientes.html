@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="actions-bar">
+  <h1 style="margin:0">Clientes</h1>
+  <div class="actions">
+    <a href="{{ url_for('nuevo_cliente') }}" class="btn small main-action-btn">+ Nuevo Cliente</a>
+  </div>
+  </div>
+
+<div class="grid grid-3" style="margin-bottom:16px;">
+  <div class="card kpi"><div>
+    <div>Total Clientes</div>
+  <div class="value">{{ totals.total | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Clientes Activos</div>
+  <div class="value">{{ totals.active | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Vehículos Registrados</div>
+  <div class="value">{{ totals.vehicles | default(0) }}</div></div>
+</div>
+
+<div class="card">
+  <div style="margin-bottom:10px"><input class="search" placeholder="Buscar por nombre, email o teléfono..."></div>
+  <div class="mobile-cards">
+    {% for c in clients %}
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>{{ c.name }}</strong></div>
+        <div style="display:flex;gap:10px;">
+          <a href="tel:{{ c.phone }}" style="color:#0f2740;font-size:18px;">📞</a>
+          <a href="mailto:{{ c.email }}" style="color:#0f2740;font-size:18px;">✉️</a>
+        </div>
+      </div>
+      <div><strong>Vehículos:</strong> {{ c.vehicles }}</div>
+      <div><strong>Órdenes:</strong> {{ c.orders }}</div>
+      <div><strong>Última Vista:</strong> {{ c.last }}</div>
+      <div><strong>Estado:</strong>
+        {% if c.state == 'Activo' %}
+        <span class="badge b-green">Activo</span>
+        {% else %}
+        <span class="badge b-gray">Inactivo</span>
+        {% endif %}
+      </div>
+      <div class="actions"><a class="btn" href="{{ url_for('cliente_detalle', id=c.id) }}">Ver Detalles</a></div>
+    </div>
+    {% endfor %}
+  </div>
+
+<div class="evaluator-comment-section">
+  <h3>Comentarios del Evaluador (Requisito de Prototipo)</h3>
+  <textarea placeholder="Escribe aquí tus observaciones..." rows="4"></textarea>
+</div>
+{% endblock %}

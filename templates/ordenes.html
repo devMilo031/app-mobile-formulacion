@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="actions-bar">
+  <h1 style="margin:0">Órdenes de Reparación</h1>
+  <div class="actions">
+    <a href="{{ url_for('nueva_orden') }}" class="btn small main-action-btn">+ Nueva Orden</a>
+  </div>
+  </div>
+
+<div class="grid grid-4" style="margin-bottom:16px;">
+  <div class="card kpi"><div>
+    <div>Total Órdenes</div>
+  <div class="value">{{ totals.total | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>En Progreso</div>
+  <div class="value">{{ totals.progress | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Completadas</div>
+  <div class="value">{{ totals.completed | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Pendientes</div>
+  <div class="value">{{ totals.pending | default(0) }}</div></div>
+</div>
+
+<div class="card">
+  <div style="margin-bottom:10px"><input class="search" placeholder="Buscar por orden, cliente o vehículo..."></div>
+  <div class="mobile-cards">
+    {% for o in orders %}
+    <div class="card">
+      <div><strong>N° de Orden:</strong> {{ o.code }}</div>
+      <div><strong>Cliente:</strong> {{ o.client }}</div>
+      <div><strong>Vehículo:</strong> {{ o.vehicle }}</div>
+      <div><strong>Técnico:</strong> {{ o.tech }}</div>
+      <div><strong>Fecha:</strong> {{ o.date }}</div>
+      <div><strong>Estado:</strong>
+        {% set s = o.status %}
+        <span class="badge {% if 'Diagnóstico' in s %}b-blue{% elif 'Progreso' in s %}b-orange{% elif 'Esperando' in s %}b-orange{% elif 'Aprobación' in s %}b-orange{% else %}b-gray{% endif %}">{{ s }}</span>
+      </div>
+      <div class="actions"><a class="btn" href="{{ url_for('orden_detalle', id=o.id) }}">Ver Detalles</a></div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="evaluator-comment-section">
+  <h3>Comentarios del Evaluador (Requisito de Prototipo)</h3>
+  <textarea placeholder="Escribe aquí tus observaciones..." rows="4"></textarea>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="actions-bar">
+  <h1 style="margin:0">Inventario</h1>
+  <div class="actions">
+    <a href="{{ url_for('agregar_producto') }}" class="btn small main-action-btn">+ Agregar Producto</a>
+    <a href="#" class="btn small outline secondary-action-btn">Exportar Reporte</a>
+  </div>
+  </div>
+
+<div class="grid grid-4" style="margin-bottom:16px;">
+  <div class="card kpi"><div>
+    <div>Total Productos</div>
+  <div class="value">{{ totals.count | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Valor Total</div>
+    <div class="subtle">En inventario</div>
+  <div class="value">${{ totals.value | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Productos Bajo Stock</div>
+    <div class="subtle">Requieren reposición</div>
+  <div class="value">{{ totals.low | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Categorías</div>
+    <div class="subtle">Diferentes categorías</div>
+  <div class="value">{{ totals.cats | default(0) }}</div></div>
+</div>
+
+<div class="card">
+  <div style="margin-bottom:10px"><input class="search" placeholder="Buscar por nombre, código o marca..."></div>
+  <div class="mobile-cards">
+    {% for i in items %}
+    <div class="card">
+      <div><strong>{{ i.product }}</strong></div>
+      <div><strong>Código:</strong> {{ i.code }}</div>
+      <div><strong>Categoría:</strong> {{ i.category }}</div>
+      <div><strong>Marca:</strong> {{ i.brand }}</div>
+      <div><strong>Cantidad:</strong> <span style="font-size:18px;font-weight:bold;" class="{% if i.status == 'Bajo Stock' %}b-orange{% else %}b-green{% endif %}">{{ i.qty }}</span></div>
+      <div><strong>Precio:</strong> {{ i.price }}</div>
+      <div><strong>Ubicación:</strong> {{ i.loc }}</div>
+      <div><strong>Estado:</strong>
+        {% if i.status == 'Bajo Stock' %}
+        <span class="badge b-orange">Bajo Stock</span>
+        {% else %}
+        <span class="badge b-green">Normal</span>
+        {% endif %}
+      </div>
+      <div class="actions"><a class="btn" href="#">Editar</a></div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="evaluator-comment-section">
+  <h3>Comentarios del Evaluador (Requisito de Prototipo)</h3>
+  <textarea placeholder="Escribe aquí tus observaciones..." rows="4"></textarea>
+</div>
+{% endblock %}
+
+

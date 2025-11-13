@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card" style="max-width:900px;margin:16px auto;">
+  <h2 style="margin-top:0">Factura {{ invoice.no }}</h2>
+  <div class="grid grid-2">
+    <div>
+      <div><b>Cliente:</b> {{ invoice.client }}</div>
+      <div><b>Orden:</b> {{ invoice.order }}</div>
+      <div><b>Emisión:</b> {{ invoice.emit }}</div>
+      <div><b>Vencimiento:</b> {{ invoice.due }}</div>
+    </div>
+    <div>
+      <div><b>Subtotal:</b> ${{ "%.2f"|format(invoice.subtotal) }}</div>
+      <div><b>IVA:</b> ${{ "%.2f"|format(invoice.vat) }}</div>
+      <div><b>Total:</b> ${{ "%.2f"|format(invoice.total) }}</div>
+      <div><b>Estado:</b> {{ invoice.status }}</div>
+    </div>
+  </div>
+  <div style="margin-top:12px">
+    <a class="btn" href="{{ url_for('facturacion') }}">Volver</a>
+  </div>
+</div>
+{% endblock %}

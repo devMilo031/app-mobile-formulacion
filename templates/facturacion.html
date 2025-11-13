@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="actions-bar">
+  <h1 style="margin:0">Facturación</h1>
+  <div class="actions">
+    <a href="{{ url_for('nueva_factura') }}" class="btn small main-action-btn">+ Nueva Factura</a>
+    <a href="#" class="btn small outline secondary-action-btn">Exportar</a>
+  </div>
+  </div>
+
+<div class="grid grid-4" style="margin-bottom:16px;">
+  <div class="card kpi"><div>
+    <div>Total Facturado</div>
+  <div class="value">${{ summary.total | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Pagadas</div>
+  <div class="value">{{ summary.paid | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Pendientes</div>
+  <div class="value">{{ summary.due | default(0) }}</div></div>
+  <div class="card kpi"><div>
+    <div>Vencidas</div>
+  <div class="value">{{ summary.overdue | default(0) }}</div></div>
+</div>
+
+<div class="card">
+  <div style="margin-bottom:10px"><input class="search" placeholder="Buscar por número de factura, cliente u orden..."></div>
+  <div class="mobile-cards">
+    {% for f in invoices %}
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>Factura {{ f.no }}</strong></div>
+        <div style="display:flex;gap:10px;">
+          <a href="tel:{{ f.client }}" style="color:#0f2740;font-size:18px;">📞</a>
+          <a href="mailto:{{ f.client }}" style="color:#0f2740;font-size:18px;">✉️</a>
+        </div>
+      </div>
+      <div><strong>Cliente:</strong> {{ f.client }}</div>
+      <div><strong>N° Orden:</strong> {{ f.order }}</div>
+      <div><strong>Fecha Emisión:</strong> {{ f.emit }}</div>
+      <div><strong>Fecha Vencimiento:</strong> {{ f.due }}</div>
+      <div><strong>Total:</strong> <span style="font-size:18px;font-weight:bold;color:#1A3B5D;">{{ f.total }}</span></div>
+      <div><strong>Estado:</strong>
+        {% if f.state == 'Pagada' %}
+        <span class="badge b-green">Pagada</span>
+        {% elif f.state == 'Pendiente' %}
+        <span class="badge b-orange">Pendiente</span>
+        {% elif f.state == 'Vencida' %}
+        <span class="badge b-blue">Vencida</span>
+        {% else %}
+        <span class="badge b-gray">{{ f.state }}</span>
+        {% endif %}
+      </div>
+      <div class="actions"><a class="btn" href="{{ url_for('factura_detalle', id=f.id) }}">Ver</a></div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="evaluator-comment-section">
+  <h3>Comentarios del Evaluador (Requisito de Prototipo)</h3>
+  <textarea placeholder="Escribe aquí tus observaciones..." rows="4"></textarea>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="login-profile-icon">
+  <i class="fas fa-user"></i>
+</div>
+<div class="login-card-glass">
+  <h2 style="margin-top:0; color: #f8f9fa;">Login</h2>
+  <form method="post" action="{{ url_for('login', next=request.args.get('next')) }}">
+    <div class="input-group-login">
+      <i class="fas fa-envelope"></i>
+      <input name="username" placeholder="admin" required class="login-input-field">
+    </div>
+    <div class="input-group-login">
+      <i class="fas fa-lock"></i>
+      <input type="password" name="password" placeholder="admin123" required class="login-input-field">
+    </div>
+    <button class="btn-login-main" type="submit">Entrar</button>
+    <div class="forgot-password-link">
+      <a href="{{ url_for('forgot_password_in_progress') }}">Olvidé mi contraseña</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AutoGestion</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleBtn = document.getElementById('toggle-sidebar');
+      const sidebar = document.getElementById('sidebar');
+      const main = document.querySelector('.main');
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('hidden');
+        if (window.innerWidth > 768) {
+          main.style.marginLeft = sidebar.classList.contains('hidden') ? '0' : '280px';
+        }
+      });
+      // Close sidebar on mobile when clicking outside
+      document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !toggleBtn.contains(e.target) && !sidebar.classList.contains('hidden')) {
+          sidebar.classList.add('hidden');
+        }
+      });
+    });
+
+    function changeDate(offset) {
+      const dateSpan = document.getElementById('current-date');
+      const appointmentsDiv = document.getElementById('appointments');
+      // Simple date manipulation for demo
+      const currentText = dateSpan.textContent;
+      const dateMatch = currentText.match(/(\d+) de (\w+) (\d+)/);
+      if (dateMatch) {
+        let day = parseInt(dateMatch[1]);
+        const month = dateMatch[2];
+        const year = parseInt(dateMatch[3]);
+        day += offset;
+        dateSpan.textContent = `Hoy, ${day} de ${month} ${year}`;
+        // Filter appointments based on new date (simplified)
+        const newDate = `2025-10-${String(day).padStart(2, '0')}`;
+        appointmentsDiv.innerHTML = `
+          <div class="appointment-card">
+            <div class="time">9:00 AM</div>
+            <div class="client">Cliente Ejemplo</div>
+            <div class="service">Servicio de Ejemplo</div>
+          </div>
+        `;
+      }
+    }
+
+    // Auto-hide sidebar on nav item click for mobile
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          document.getElementById('sidebar').classList.add('hidden');
+        }
+      });
+    });
+
+    // Also hide on dashboard action buttons for mobile
+    const dashboardActions = document.querySelectorAll('.dashboard-action');
+    dashboardActions.forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          document.getElementById('sidebar').classList.add('hidden');
+        }
+      });
+    });
+
+    // Prevent form from showing behind sidebar
+    const agendarBtn = document.querySelector('a[href*="agendar-cita"]');
+    if (agendarBtn) {
+      agendarBtn.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && !document.getElementById('sidebar').classList.contains('hidden')) {
+          e.preventDefault();
+          document.getElementById('sidebar').classList.add('hidden');
+          setTimeout(() => {
+            window.location.href = this.href;
+          }, 300);
+        }
+      });
+    }
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/service-worker.js')
+          .then(registration => {
+            console.log('Service Worker registered successfully:', registration);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</head>
+<body class="{% if request.endpoint == 'login' %}login-page{% endif %}">
+  <div class="layout">
+    {% if request.endpoint != 'login' %}
+    <aside class="sidebar hidden" id="sidebar">
+      <div class="brand">AutoGestion</div>
+      <button class="close-sidebar" onclick="document.getElementById('sidebar').classList.add('hidden')">✕</button>
+      <div class="sidebar-user-profile">
+        <span class="user-name">Juan Pérez</span>
+        <span class="user-role">Administrador</span>
+      </div>
+      <nav>
+        <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.path=='/' %}active{% endif %}">Dashboard</a>
+        <a href="{{ url_for('agenda_view') }}" class="nav-item {% if request.path.startswith('/agenda') %}active{% endif %}">Agenda</a>
+        <a href="{{ url_for('ordenes') }}" class="nav-item {% if request.path.startswith('/ordenes') %}active{% endif %}">Órdenes de Reparación</a>
+        <a href="{{ url_for('clientes') }}" class="nav-item {% if request.path.startswith('/clientes') %}active{% endif %}">Clientes</a>
+        <a href="{{ url_for('inventario') }}" class="nav-item {% if request.path.startswith('/inventario') %}active{% endif %}">Inventario</a>
+        <a href="{{ url_for('facturacion') }}" class="nav-item {% if request.path.startswith('/facturacion') %}active{% endif %}">Facturación</a>
+        <a href="{{ url_for('logout') }}" class="nav-item">Cerrar Sesión</a>
+      </nav>
+    </aside>
+    {% endif %}
+    <div class="main">
+      {% if request.endpoint != 'login' %}
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="toggle-sidebar" class="btn small">☰</button>
+        </div>
+        <div class="brand-header">AutoGestion</div>
+      </header>
+      {% endif %}
+      <main class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+
+

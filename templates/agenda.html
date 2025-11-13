@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="actions-bar">
+  <h1 style="margin:0">Agenda / Calendario de Citas</h1>
+  <div class="actions">
+    <a href="{{ url_for('nueva_cita') }}" class="btn small main-action-btn">+ Nueva Cita</a>
+  </div>
+  </div>
+
+<div class="card">
+  <div class="subtle" style="margin-bottom:8px">Semana del 6 - 11 de Octubre, 2023</div>
+  <div class="calendar">
+    <div class="cal-grid">
+      <div class="col">
+        <div class="slot"><span>8:00</span></div>
+        <div class="slot"><span>9:00</span></div>
+        <div class="slot"><span>10:00</span></div>
+        <div class="slot"><span>11:00</span></div>
+        <div class="slot"><span>12:00</span></div>
+        <div class="slot"><span>13:00</span></div>
+        <div class="slot"><span>14:00</span></div>
+        <div class="slot"><span>15:00</span></div>
+        <div class="slot"><span>16:00</span></div>
+        <div class="slot"><span>17:00</span></div>
+      </div>
+      <div class="day">
+        <div class="event" style="top:56px;background:#1A3B5D;">María González — Cambio de aceite</div>
+      </div>
+      <div class="day">
+        <div class="event" style="top:112px;background:#28A745;">Pedro Martínez — Revisión general</div>
+      </div>
+      <div class="day">
+        <div class="event" style="top:84px;background:#FD7E14;">Laura Sánchez — Alineación</div>
+      </div>
+      <div class="day">
+        <div class="event" style="top:56px;background:#2F80ED;">Carmen Vargas — Diagnóstico</div>
+      </div>
+      <div class="day"></div>
+      <div class="day"></div>
+    </div>
+  </div>
+</div>
+<div class="card mobile-agenda">
+  <h2>Agenda Diaria</h2>
+  <div class="date-nav">
+    <button class="btn outline" onclick="changeDate(-1)">◀ Día Anterior</button>
+    <span id="current-date">Hoy, 8 de Octubre 2023</span>
+    <button class="btn outline" onclick="changeDate(1)">Día Siguiente ▶</button>
+  </div>
+  <div id="appointments">
+  {% for a in agenda %}
+  <div class="appointment-card">
+    <div class="time">{{ a.time }}</div>
+    <div class="client">{{ a.client }}</div>
+    <div class="service">{{ a.description }}</div>
+  </div>
+  {% endfor %}
+  </div>
+  <div class="actions" style="margin-top:15px">
+    <a href="{{ url_for('nueva_cita') }}" class="btn">+ Agendar Nueva Cita</a>
+  </div>
+</div>
+<div class="card">
+  <h2>Próximas Citas</h2>
+  {% for a in agenda %}
+  <div class="event" style="margin-bottom:10px;padding:10px;border-radius:8px;background:#f8fafc;">
+    <strong>{{ a.date }} {{ a.time }}</strong><br/>
+    {{ a.client }} — {{ a.description }}
+  </div>
+{% endfor %}
+</div>
+
+<div class="evaluator-comment-section">
+  <h3>Comentarios del Evaluador (Requisito de Prototipo)</h3>
+  <textarea placeholder="Escribe aquí tus observaciones..." rows="4"></textarea>
+</div>
+{% endblock %}
+
+
